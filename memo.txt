@@ -1,0 +1,85 @@
+poetry init
+
+라이브러리 제거
+poetry remove 라이브러리 이름
+
+[tool.poetry.dependencies] 에는 배포 환경의 라이브러리를 설치
+poetry add 라이브러리 이름
+
+[tool.poetry.group.dev.dependencies] 에 개발환경의 라이브러리 설치
+poetry add -G dev 라이브러리 이름
+
+팀원이 해야할 일
+
+poetry가 생성한 pyproject.toml에 작성된 dependencies목록을 기반으로 라이브러리 설치
+poetry install --no-root
+가상환경 없으면 가상환경을 자동생성함. 기본설정 : 전역위치에 가상화경 생성
+혹은 가상환경을 미리 만든 상태에선 가상환경에 라이브러리를 설치
+
+전역 가상환경 위치 확인
+poetry env info --path
+
+전역 가상환경 제거
+poetry env remove python
+
+가상환경 생성
+python3 -m venv .venv
+
+설정 파일 생성
+django-admin startproject config .
+
+앱 만들기
+python3 manage.py startapp 앱이름
+
+postgresql db 설치
+brew install postgresql
+
+PostgreSQL 서버 실행
+brew services start postgresql
+
+실행 확인
+brew services
+
+PostgreSQL 설치시 자동으로 생성되는 데이터베이스인 postgres에 접속
+psql postgres
+
+유저 확인
+본인의 맥 유저 이름 혹은 postgres라는 유저가 있어야 정상
+\du
+
+새로운 유저를 생성
+CREATE USER 유저이름
+
+비밀번호 설정
+ALTER USER root WITH PASSWORD '비밀번호';
+
+권한 설정
+ALTER USER root WITH SUPERUSER;
+
+유저 다시 확인
+\du
+
+db 생성
+CREATE DATABASE 데이터베이스이름;
+
+db 목록 확인
+\l
+
+
+새로 생성된 유저 혹은 기본 유저를 활용하여 생성된 데이터베이스로 접속
+psql 데이터베이스 이름
+또는
+psql -U 유저이름 -d 데이터베이스이름 -W
+(W옵션은 비밀번호를 입력하여 접속하는 것 입니다. 필수는 아님)
+
+테이블 내역을 조회
+\dt
+
+PostgreSQL을 Django에서 사용하려면 필요한 psycopg 설치
+poetry add psycopg2-binary
+
+ln -sf dev.py settings.py
+ln -sf prod.py settings.py
+
+ln -sf urls_dev.py urls.py
+ln -sf urls_prod.py urls.py

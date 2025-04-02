@@ -1,0 +1,81 @@
+
+1. User 테이블
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    nickname VARCHAR(100) UNIQUE NOT NULL,
+    phone_number VARCHAR(20),
+    password VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    is_admin BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+2. Account (계좌)
+
+CREATE TABLE accounts (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    account_number VARCHAR(30) UNIQUE NOT NULL,
+    balance NUMERIC(12, 2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+3. Transaction (거래)
+
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
+    amount NUMERIC(12, 2) NOT NULL,
+    transaction_type VARCHAR(10) CHECK (transaction_type IN ('입금', '출금')),
+    description TEXT,
+    transaction_date TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+4. TokenBlacklist (로그아웃된 JWT 토큰)
+
+CREATE TABLE token_blacklist (
+    id SERIAL PRIMARY KEY,
+    token TEXT NOT NULL,
+    blacklisted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ 5. Analysis (주간/월간 분석 결과 저장)
+
+ CREATE TABLE analyses (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    period_start DATE NOT NULL,
+    period_end DATE NOT NULL,
+    summary TEXT,
+    chart_data JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+6. Notifications (알림)
+
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    notification_type VARCHAR(20), -- 예: '잔액경고', '거래발생'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+7. NotificationSettings (알림 설정)
+
+CREATE TABLE notification_settings (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    notify_on_transaction BOOLEAN DEFAULT TRUE,
+    notify_on_low_balance BOOLEAN DEFAULT TRUE,
+    low_balance_threshold NUMERIC(12, 2) DEFAULT 0.00,
+    send_email BOOLEAN DEFAULT TRUE,
+    send_in_app BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
