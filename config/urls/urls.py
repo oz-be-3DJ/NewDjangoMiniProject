@@ -1,1 +1,1 @@
-urls_dev.py
+from .urls_dev import *
