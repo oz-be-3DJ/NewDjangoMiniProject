@@ -1,10 +1,13 @@
 ﻿# OZ_BEG_09_3DJ의 DjangoMiniProject 시작합니다. 
 
 # ERD작성 요구사항
-![image](https://github.com/user-attachments/assets/8444312f-fc27-4484-94e8-a79cca7b6f82)
+![image](https://github.com/user-attachments/assets/ad26a35f-de1e-415c-9548-96f21e309a28)
+
+
 
 # 작성된 ERD
-![image](https://github.com/user-attachments/assets/5a615194-acf7-43eb-9446-67f4a0d7d4c3)
+![image](https://github.com/user-attachments/assets/7b325bc5-af06-4489-a674-e7e8b2de596f)
+
 
 
 ### 테이블 설명 및 관계
