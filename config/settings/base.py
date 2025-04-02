@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydb01',        # 생성한 DB 이름
+        'NAME': 'bank',        # 생성한 DB 이름
         'USER': 'root',          # PostgreSQL 사용자
         'PASSWORD': '1234',      # 비밀번호
         'HOST': 'localhost',     # 로컬에서 실행 중이므로 localhost
