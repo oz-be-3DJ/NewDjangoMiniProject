@@ -58,3 +58,5 @@ class TransactionHistory(models.Model):
 
     class Meta:
         db_table = 'transaction_history'
+        verbose_name = '결제 내역'
+        verbose_name_plural = '결제 내역 목록'
