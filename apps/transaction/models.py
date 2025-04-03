@@ -1,19 +1,22 @@
 from django.db import models
 
+from apps.account.models import Account
+
+
 # Create your models here.
 class TransactionHistory(models.Model):
     # TransactionHistory ID (Primary Key)
-    id = models.AutoField(
-        primary_key=True,
-        verbose_name = "거래내역 ID",
-    )
+    # id = models.AutoField(
+    #     primary_key=True,
+    #     verbose_name = "거래내역 ID",
+    # )
 
     # 계좌 ID (Foreign Key)
-    # account_id = models.ForeignKey(
-    #     'apps.account.Account',
-    #     on_delete=models.CASCADE,
-    #     verbose_name="계좌 ID",
-    # ) marge 후 주석 풀기
+    account = models.ForeignKey(
+        Account,
+        on_delete=models.CASCADE,
+        verbose_name="계좌 ID",
+    )
 
     # 거래 금액
     transaction_amount = models.DecimalField(

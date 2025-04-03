@@ -57,7 +57,7 @@ class User(AbstractBaseUser, TimestampModel):  # 기본 기능은 상속받아�
 
     USERNAME_FIELD = 'email'  # 기본 유저네임(아이디)를 email로 지정
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = ['email','nickname']
+    REQUIRED_FIELDS = []
 
     class Meta:
         db_table = 'users'
