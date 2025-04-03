@@ -83,3 +83,16 @@ ln -sf prod.py settings.py
 
 ln -sf urls_dev.py urls.py
 ln -sf urls_prod.py urls.py
+
+
+bank db에 bankcode 데이터 넣기
+
+bank db 접속
+psql bank
+
+db.txt에 있는 테이블 새성 쿼리 입력
+INSERT INTO bank_code (code, name) VALUES
+('000', '알수없음'),
+('001', '한국은행'),
+('002', '산업은행'),
+...

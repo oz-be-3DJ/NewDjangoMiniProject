@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'apps.account',  # Account 앱 등록
     'apps.user',
     'apps.bankcode',
+    # "apps.user.apps.UserConfig",  # User앱 등록
 
     # 3rd party
     'rest_framework',
@@ -137,7 +138,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Auth
-AUTH_USER_MODEL = 'apps.user.User'  # 유저 모델 지정
+AUTH_USER_MODEL = 'user.User'  # 유저 모델 지정
 
 
 STATIC_URL = 'static/'
