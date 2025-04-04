@@ -9,18 +9,25 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import json
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+with open(BASE_DIR / '.config_secret' / 'secret.json') as f:
+    config_secret_str = f.read()
+
+SECRET = json.loads(config_secret_str)  # json 형태를 딕셔너리 형태로 바꿈
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9u=$gmlz$b8h2^d9%3x871ti9pcile_q19lif*#yw(q@#=nb!8'
+# SECRET_KEY = 'django-insecure-9u=$gmlz$b8h2^d9%3x871ti9pcile_q19lif*#yw(q@#=nb!8'
+SECRET_KEY = SECRET['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -43,12 +50,11 @@ INSTALLED_APPS = [
     'apps.account',  # Account 앱 등록
     'apps.user',
     'apps.bankcode',
-    # "apps.user.apps.UserConfig",  # User앱 등록
 
     # 3rd party
-    'rest_framework',
+    'rest_framework', #
     # 'django_extensions',
-    # 'rest_framework_simplejwt',
+    'rest_framework_simplejwt',  # poetry add djangorestframework-simplejwt
 ]
 
 MIDDLEWARE = [
@@ -61,7 +67,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls.urls_dev'
+ROOT_URLCONF = 'config.urls.urls'
 
 TEMPLATES = [
     {
@@ -140,10 +146,61 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Auth
 AUTH_USER_MODEL = 'user.User'  # 유저 모델 지정
 
-
-STATIC_URL = 'static/'
-STATIC_ROOT = '.static_root'
+# STATIC_URL = 'static/'
+# STATIC_ROOT = '.static_root'
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# 이런식으로 아이디랑 비밀번호 설정해놓고 같이 깃에 올라가면 누군가 볼 수도있고
+# 비공개 리파짓토리라도 중간에 탈취당할 위험이 있음.
+# 그래서 환경변수를 사용해서 정보를 내 컴퓨터에서 읽어오도록함.
+# EMAIL_HOST_USER = 'test@gmail.com'
+# EMAIL_HOST_PASSWORD = '1111'
+
+# # Email
+# # from django.core.mail.backends.smtp import EmailBackend
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.naver.com' # 네이버 환결설정에서 볼 수 있음.
+# EMAIL_USE_TLS = True  # 보안연결
+# EMAIL_PORT = 587  # 네이버 메일 환경설정에서 확인 가능
+# EMAIL_HOST_USER = SECRET["email"]["user"]
+# EMAIL_HOST_PASSWORD =  SECRET["email"]["password"]
+
+# .config_secret 폴더 만들고
+# 폴더에 secret.json 만들고
+# .gitignore에 추가한 후 관리
+# print(SECRET['DB']['HOST'])
+# print(SECRET['DB2']['HOST'])
+# 이렇게 쓸 수도있고 dotenv를 통해 관리할 수도 있음
+
+LOGIN_URL = '/user/login/'
+LOGOUT_REDIRECT_URL = '/user/login/'
+# LOGOUT_REDIRECT_URL = '/'
+
+# OAuth
+# NAVER_CLIENT_ID = SECRET["naver"]["client_id"]
+# NAVER_CLIENT_SECRET = SECRET["naver"]["secret"]
+#
+# GITHUB_CLIENT_ID = SECRET["github"]["client_id"]
+# GITHUB_CLIENT_SECRET = SECRET["github"]["secret"]
+
+# REST_FRAMEWORK 설정
+REST_FRAMEWORK = {
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 10,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
+
+# JWT 설정
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    # It will work instead of the default serializer(TokenObtainPairSerializer).
+    "TOKEN_OBTAIN_SERIALIZER": "utils.jwt_serializers.BankTokenObtainPairSerializer",
+    # ...
 }

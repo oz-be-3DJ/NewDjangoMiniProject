@@ -8,30 +8,22 @@ from utils.models import TimestampModel
 
 # 사용자 지정 메니져
 class UserManager(BaseUserManager):
-    def create_user(self, email, password):
+    def create_user(self, email, password, **kwargs):
         if not email:
             raise ValueError('올바른 이메일을 입력하세요.')
-        user = self.model (
-            email = self.normalize_email(email),
-        )
+        user = self.model ( email = self.normalize_email(email), **kwargs )
         user.set_password(password) # 해시화
-        user.is_active = False
+        user.is_active = True
         user.save(using = self._db)
         return user
 
-    def create_superuser(self, email, password):
-        user = self.create_user(email, password)
+    def create_superuser(self, email, password, nickname):
+        user = self.create_user(email, password, nickname=nickname)
         user.is_admin = True
+        user.is_staff = True
         user.is_active = True
         user.save(using=self._db)
         return user
-
-    def make_random_password(self, length=10,
-                             allowed_chars='abcdefghjkmnpqrstuvwxyz'
-                                           'ABCDEFGHJKLMNPQRSTUVWXYZ'
-                                           '23456789'):
-        from django.utils.crypto import get_random_string
-        return get_random_string(length, allowed_chars)
 
 # 암호화는 복호화가 가능함
 # 암호화는 qwer1234 -> aslkfjdslkfj322kj43 -> 복호화 -> qwer1234
@@ -46,9 +38,9 @@ class User(AbstractBaseUser, TimestampModel):  # 기본 기능은 상속받아�
     name = models.CharField(verbose_name='이름', max_length=20)
     phone_number = models.CharField(verbose_name='전화번호', max_length=15, null=True)
     last_login = models.DateTimeField(verbose_name='마지막 로그인', null=True)
-    is_staff = models.BooleanField(default = False)  # is_staff 기능
-    is_admin = models.BooleanField(default = False)  # 기본적으로 is_superuser가 관리자 # 별도 설정 필요
-    is_active = models.BooleanField(default = False) # 기본적으로 비활성화 시켜놓고 확인 절차를 거친 후 활성화
+    is_staff = models.BooleanField(verbose_name='스태프 권한', default = False)  # is_staff 기능
+    is_admin = models.BooleanField(verbose_name='관리자 권한', default = False)  # 기본적으로 is_superuser가 관리자 # 별도 설정 필요
+    is_active = models.BooleanField(verbose_name='계정 활성화', default = False) # 기본적으로 비활성화 시켜놓고 확인 절차를 거친 후 활성화
     # is_superuser = models.BooleanField(default = False)  # is_superuser(관리자) 기능
 
     # 사용자 지정 메니져
@@ -57,7 +49,7 @@ class User(AbstractBaseUser, TimestampModel):  # 기본 기능은 상속받아�
 
     USERNAME_FIELD = 'email'  # 기본 유저네임(아이디)를 email로 지정
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['nickname']
 
     class Meta:
         db_table = 'users'
