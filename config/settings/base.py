@@ -16,18 +16,18 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-with open(BASE_DIR / '.config_secret' / 'secret.json') as f:
-    config_secret_str = f.read()
-
-SECRET = json.loads(config_secret_str)  # json 형태를 딕셔너리 형태로 바꿈
+# with open(BASE_DIR / '.config_secret' / 'secret.json') as f:
+#     config_secret_str = f.read()
+#
+# SECRET = json.loads(config_secret_str)  # json 형태를 딕셔너리 형태로 바꿈
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-9u=$gmlz$b8h2^d9%3x871ti9pcile_q19lif*#yw(q@#=nb!8'
-SECRET_KEY = SECRET['DJANGO_SECRET_KEY']
+SECRET_KEY = 'django-insecure-9u=$gmlz$b8h2^d9%3x871ti9pcile_q19lif*#yw(q@#=nb!8'
+# SECRET_KEY = SECRET['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
