@@ -299,3 +299,6 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python,django,macos
 
 .vscode/
+
+# 시크릿 폴더 설정
+.config_secret/

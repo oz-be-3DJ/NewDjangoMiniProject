@@ -96,3 +96,139 @@ INSERT INTO bank_code (code, name) VALUES
 ('001', '한국은행'),
 ('002', '산업은행'),
 ...
+
+
+.gitignore 시크릿 폴더 업로드 제한
+.config_secret/
+
+시크릿 폴더 생성
+.config_secret
+
+시크릿 폴더에 secret.json 생성
+
+secret.json에 입력
+{
+  "DJANGO_SECRET_KEY" : "django-insecure-9u=$gmlz$b8h2^d9%3x871ti9pcile_q19lif*#yw(q@#=nb!8",
+  "email": {
+    "user": "이메일",
+    "password": "비밀번호"
+  },
+  "DB": {
+  "ENGINE": "django.db.backends.postgresql",
+  "NAME": "bank",
+  "USER": "root",
+  "PASSWORD": "1234",
+  "HOST": "localhost",
+  "PORT": "5432"
+  }
+}
+
+시크릿 파일 읽어 오기 위해 settings.py에 설정
+
+with open(BASE_DIR / '.config_secret' / 'secret.json') as f:
+    config_secret_str = f.read()
+
+SECRET = json.loads(config_secret_str)  # json 형태를 딕셔너리 형태로 바꿈
+
+# Email
+# from django.core.mail.backends.smtp import EmailBackend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.naver.com' # 네이버 환결설정에서 볼 수 있음.
+EMAIL_USE_TLS = True  # 보안연결
+EMAIL_PORT = 587  # 네이버 메일 환경설정에서 확인 가능
+EMAIL_HOST_USER = SECRET["email"]["user"]
+EMAIL_HOST_PASSWORD =  SECRET["email"]["password"]
+
+# .config_secret 폴더 만들고
+# 폴더에 secret.json 만들고
+# .gitignore에 추가한 후 관리
+# print(SECRET['DB']['HOST'])
+# print(SECRET['DB2']['HOST'])
+# 이렇게 쓸 수도있고 dotenv를 통해 관리할 수도 있음
+
+LOGIN_URL = '/login/'
+LOGOUT_REDIRECT_URL = '/login/'
+# LOGOUT_REDIRECT_URL = '/'
+
+
+
+simplejwt 시작
+https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html
+
+simplejwt 설치
+poetry add djangorestframework-simplejwt
+
+# config/settings.py
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        ...
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        ...
+    ]
+}
+INSTALLED_APPS = [
+    ...
+    'rest_framework_simplejwt',
+    ...
+]
+
+# config/urls.py
+
+urlpatterns = [
+    ...
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    ...
+]
+
+simplejwt 세팅
+https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html#
+
+
+simplejwt 커스터 마이징
+https://django-rest-framework-simplejwt.readthedocs.io/en/latest/customizing_token_claims.html
+
+# utils/jwt_serializers.py
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['user_name'] = user.username  # 토큰에 유저 이름을 함께 담아서 보냄
+
+        return token
+
+# config/settings.py
+# JWT 설정
+SIMPLE_JWT = {
+  # It will work instead of the default serializer(TokenObtainPairSerializer).
+  "TOKEN_OBTAIN_SERIALIZER": "utils.jwt_serializers.MyTokenObtainPairSerializer",
+  # ...
+}
+
+토큰 정보 보는 법
+https://jwt.io/
+
+토큰 만료시간 수정
+# JWT 설정
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    # It will work instead of the default serializer(TokenObtainPairSerializer).
+    "TOKEN_OBTAIN_SERIALIZER": "utils.jwt_serializers.MyTokenObtainPairSerializer",
+    # ...
+}
+
+
+poetry add django-extensions
+poetry add ipython
+
+개발환경으로 가상환경에 라이브러리 설치
+poetry install --with dev --no-root
