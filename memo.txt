@@ -234,3 +234,53 @@ poetry lock
 
 개발환경으로 가상환경에 라이브러리 설치
 poetry install --with dev --no-root
+
+--------------------
+이메일 보내는 기능 문제
+--------------------
+
+from django.core.mail import send_mail
+send_mail 함수를 사용할 때 문제가 생긴다면
+
+try:
+    send_mail(subject, message, settings.EMAIL_HOST_USER, to_email)
+except Exception as e:
+    print(repr(e))
+    raise
+
+이렇게 해서 실패 했을 때 원인을 오류 코드로 파악한다.
+
+원인은
+SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1018)')
+인증서를 찾지 못해서 오류가 났다는 말인데
+
+인증서를 다시 연결해주면 된다.
+export SSL_CERT_FILE=$(python -m certifi)
+이렇게하면 일시적으로 해당 터미널에서만 해결
+
+해결방법1
+터미널에 영구 적용
+
+vim ~/.zshrc
+맨 아랫 줄에 추가
+export SSL_CERT_FILE=$(python -m certifi)
+
+해결방법2
+가상환경이 활성화 될때마다 인증서 경로를 자동 지정할 수 있도록 설정한다.
+
+activate스크립트 수정
+vim .venv/bin/activate
+맨 아랫줄에 추가
+export SSL_CERT_FILE=$(python -m certifi)
+
+해결방법3
+프로젝트가 인증서 경로를 인식할 수 있도록 장고 프로젝트에 설정
+
+certifi라이브러리 없으면 설치 후
+
+settings.py 최상단에 설정
+
+import os
+import certifi
+
+os.environ['SSL_CERT_FILE'] = certifi.where()

@@ -26,11 +26,11 @@ class RegisterView(CreateAPIView):
         signer = TimestampSigner()
 
         # 1. 이메일에 서명
-        # signed_email = signer.sign(user.email)
+        signed_email = signer.sign(user.email)
         # 2. 서명된 이메일을 직렬화
-        # signed_code = signing.dumps(signed_email)
+        signed_code = signing.dumps(signed_email)
 
-        signed_code = signer.sign(user.email)
+        # signed_code = signer.sign(user.email)
 
         verify_url = f'{request.scheme}://{request.get_host()}/api/users/verify/?code={signed_code}'
 
@@ -47,6 +47,7 @@ class RegisterView(CreateAPIView):
             subject = '[3DJBank] 이메일 인증을 완료해주세요.'
             message = f'아래 링크를 클릭해 인증을 완료해주세요.\n\n{verify_url}'
             send_email(subject, message, user.email)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 def verify_email(request):
@@ -54,11 +55,11 @@ def verify_email(request):
     signer = TimestampSigner()
     try:
         # 3. 직렬화된 데이터를 역직렬화
-        # decoded_user_email = signing.loads(code)
+        decoded_user_email = signing.loads(code)
         # 4. 타임스탬프 유효성 검사 포함하여 복호화
+        email = signer.unsign(decoded_user_email, max_age = 60 * 5)  # 5분 설정
 
-        # email = signer.unsign(decoded_user_email, max_age = 60 * 5)  # 5분 설정
-        email = signer.unsign(code, max_age = 60 * 5)  # 5분 설정
+        # email = signer.unsign(code, max_age = 60 * 5)  # 5분 설정
     # except Exception as e:  # 이렇게 처리 많이 하지만 에러를 지정해서 하는게 제일 좋음.
     except (SignatureExpired):  # 시간 지나서 오류발생하면 오류처리
         return JsonResponse({'detail': '인증 링크가 만료되었습니다.'}, status=400)

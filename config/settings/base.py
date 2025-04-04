@@ -9,6 +9,11 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+# 이메일 보낼 때 SSL 인증서 경로 인식 불가 시 설정
+import os
+import certifi
+os.environ['SSL_CERT_FILE'] = certifi.where()
+
 import json
 from datetime import timedelta
 from pathlib import Path
@@ -161,7 +166,7 @@ REST_FRAMEWORK = {
 # EMAIL_HOST_PASSWORD = '1111'
 
 # # Email
-# from django.core.mail.backends.smtp import EmailBackend
+# # from django.core.mail.backends.smtp import EmailBackend
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_HOST = 'smtp.naver.com' # 네이버 환결설정에서 볼 수 있음.
 # EMAIL_USE_TLS = True  # 보안연결
