@@ -9,6 +9,7 @@ class BankTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['email'] = user.email  # 토큰에 유저 정보를을 함께 담아서 보냄
         token['nickname'] = user.nickname
         token['name'] = user.name
+        token['phone_number'] = user.phone_number
 
         return token
 

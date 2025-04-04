@@ -1,9 +1,9 @@
-from django.contrib.auth.views import LogoutView
+
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 from . import viewsemail
-from .views import RegisterView ,ProfileView
+from .views import RegisterView, ProfileView, LogoutAPIView, verify_email
 
 app_name = 'user'
 
@@ -16,10 +16,12 @@ urlpatterns = [
     # path('logout/', LogoutView.as_view(), name='logout'),
 
     path("signup/", RegisterView.as_view(), name="signup"),
+
+    path('verify/', verify_email, name='verify_email'),
     # POST /api/users/login/ -> 로그인
     path("login/", TokenObtainPairView.as_view(), name="login"),
     # POST /api/users/login/ -> 로그아웃
-    # path("logout/", TokenObtainPairView.as_view(), name="logout"),
+    path("logout/", LogoutAPIView.as_view(), name="logout"),
     # GET /api/users/profile/ -> 내 프로필 조회
     # PATCH /api/users/me/ -> 내 프로필 수정
     path('profile/', ProfileView.as_view(), name="profile"),
