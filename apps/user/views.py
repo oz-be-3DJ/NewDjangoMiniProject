@@ -37,16 +37,17 @@ class RegisterView(CreateAPIView):
         # 이메일 전송 또는 콘솔 출력
         if settings.DEBUG:
             print('[3DJBank] 이메일 인증 링크:', verify_url)
+            # 응답에 verify_url 포함
+            response_data = serializer.data
+            response_data["verify_url"] = verify_url
+
+            return Response(response_data, status=status.HTTP_201_CREATED)
+
         else:
             subject = '[3DJBank] 이메일 인증을 완료해주세요.'
             message = f'아래 링크를 클릭해 인증을 완료해주세요.\n\n{verify_url}'
             send_email(subject, message, user.email)
 
-        # 응답에 verify_url 포함
-        response_data = serializer.data
-        response_data["verify_url"] = verify_url
-
-        return Response(response_data, status=status.HTTP_201_CREATED)
 
 def verify_email(request):
     code = request.GET.get('code', '')  # code가 없으면 공백으로 처리
