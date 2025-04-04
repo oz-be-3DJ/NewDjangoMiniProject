@@ -226,9 +226,11 @@ SIMPLE_JWT = {
     # ...
 }
 
+poetry add -G dev django-extensions
+poetry add -G dev ipython
 
-poetry add django-extensions
-poetry add ipython
+poetry.lock 업데이트
+poetry lock
 
 개발환경으로 가상환경에 라이브러리 설치
 poetry install --with dev --no-root
