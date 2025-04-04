@@ -9,11 +9,17 @@ from .serializers import TransactionHistorySerializer
 # Create your views here.
 class CreateTransactionView(APIView):
     def post(self, request):
-        data = request.data
+        # Serializer를 사용해 요청 데이터 검증
+        serializer = TransactionHistorySerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
 
         # 계좌 확인 (없으면 404 에러)
         try:
-            account = Account.objects.get(id=data['account'])
+            account = data['account']
         except Account.DoesNotExist:
             return Response({"error": "계좌를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -40,5 +46,5 @@ class CreateTransactionView(APIView):
         account.balance = balance_after
         account.save()
 
-        serializer = TransactionHistorySerializer(transaction)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        response_serializer = TransactionHistorySerializer(transaction)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
