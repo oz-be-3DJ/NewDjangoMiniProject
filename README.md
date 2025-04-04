@@ -6,7 +6,8 @@
 
 
 # 작성된 ERD
-![image](https://github.com/user-attachments/assets/7b325bc5-af06-4489-a674-e7e8b2de596f)
+![image](https://github.com/user-attachments/assets/e63e0014-8b96-4de6-b5a7-2c49f0cede55)
+
 
 
 
