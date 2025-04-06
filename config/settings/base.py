@@ -239,3 +239,32 @@ STORAGES = {
         },
     },
 }
+
+
+# docker desktop 설치
+# https://www.docker.com/products/docker-desktop/
+# 도커 다운로드
+# docker google 로그인
+#
+# 도커 백그라운드로 실행
+# docker compose up -d
+#
+# 확인
+# docker ps
+#
+# 도커 종료
+# docker compose down
+#
+# 도커 확인
+# docker ps
+#
+# 도커 실행
+# docker compose up
+#
+# docker compose up -d
+# docker exec -it instagram bash
+# ls /var/lib/postgresql/data/instagram
+#
+# 파이참 우측에 데이터베이스 클릭
+# + databasesource postgresql
+# docker-compose.yml 설정 파일 보고 설정

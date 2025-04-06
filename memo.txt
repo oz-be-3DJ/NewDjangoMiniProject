@@ -452,8 +452,88 @@ STORAGES = {
     },
 }
 
+--------------------------
+# S3에 static 파일 업로드 하기
+--------------------------
+
+python-dotenv 설치
+poetry add python-dotenv
+
+settings.py에 설정
+from dotenv import load_dotenv
+load_dotenv(BASE_DIR / '.env')  # .env 파일 로드
+
 # S3에 static 파일 업로드
-python manage.py collectstatic
+python3 manage.py collectstatic
+
+--------------
+RDS 생성 및 설정
+--------------
+
+RDS생성
+
+.env에 DATABASES 정보 입력
+
+settings.py(prod.py)에 설정
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv("DB_NAME"),              # 생성한 DB 이름
+        'USER': os.getenv("DB_USER"),              # PostgreSQL 사용자
+        'PASSWORD': os.getenv("DB_PASSWORD"),      # 비밀번호
+        'HOST': os.getenv("DB_HOST"),              # 로컬에서 실행 중이므로 localhost
+        'PORT': os.getenv("DB_PORT", "5432"),      # RDS 엔드포인트
+    }
+}
 
 ec2 접속
 ssh -i 키/페어/저장/위치/mp-key.pem ubuntu@EC2_PUBLIC_IP
+
+--------------------------
+# Docker 세팅
+--------------------------
+
+작성한 Dockerfile을 통해 이미지를 빌드
+docker build -t django .
+
+빌드된 Docker 이미지를 통해 컨테이너 실행
+docker run -p 8000:8000 --env-file .env django
+
+Dockerfile 생성
+# 베이스 이미지 (본인 프로젝트에 맞는 버전 기입)
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+
+# 종속성 파일 복사
+COPY ./poetry.lock /mini_project/
+COPY ./pyproject.toml /mini_project/
+
+# 작업 디렉토리 설정
+WORKDIR /mini_project
+
+# 종속성 설치
+RUN pip3 install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install
+RUN poetry add gunicorn
+
+# 애플리케이션 코드 복사
+COPY ./app /mini_project/app
+WORKDIR /mini_project/app
+
+
+# 소켓 파일 생성 디렉토리 권한 설정
+RUN mkdir -p /mini_project && chmod -R 755 /mini_project
+
+# Gunicorn을 사용하여 애플리케이션 실행
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2"]
+
+쉘 스크립트 작성
+
+scripts/run.sh 생성
+mkdir -p scripts
+touch scripts/run.sh
+
+

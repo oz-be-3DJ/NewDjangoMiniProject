@@ -1,5 +1,9 @@
 from .base import *
 
+from dotenv import load_dotenv
+load_dotenv(BASE_DIR / '.env')  # .env 파일 로드
+# print("S3_REGION_NAME:", os.getenv("S3_REGION_NAME"))
+
 DEBUG = True
 
 ALLOWED_HOSTS = [
@@ -8,16 +12,16 @@ ALLOWED_HOSTS = [
     "15.164.244.79",  # EC2 퍼블릭 IP
 ]
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'bank',        # 생성한 DB 이름
-#         'USER': 'root',          # PostgreSQL 사용자
-#         'PASSWORD': '1234',      # 비밀번호
-#         'HOST': 'localhost',     # 로컬에서 실행 중이므로 localhost
-#         'PORT': '5432',          # PostgreSQL 기본 포트
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv("DB_NAME"),              # 생성한 DB 이름
+        'USER': os.getenv("DB_USER"),              # PostgreSQL 사용자
+        'PASSWORD': os.getenv("DB_PASSWORD"),      # 비밀번호
+        'HOST': os.getenv("DB_HOST"),              # 로컬에서 실행 중이므로 localhost
+        'PORT': os.getenv("DB_PORT", "5432"),      # RDS 엔드포인트
+    }
+}
 
 # Static, Media URL 수정
 STATIC_URL = f'https://{os.getenv("S3_STORAGE_BUCKET_NAME", "django-mini-project")}.s3.amazonaws.com/static/'
@@ -26,7 +30,7 @@ MEDIA_URL = f'https://{os.getenv("S3_STORAGE_BUCKET_NAME", "django-mini-project"
 # STORAGES 작성
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "access_key": os.getenv("S3_ACCESS_KEY", ""),
             "secret_key": os.getenv("S3_SECRET_ACCESS_KEY", ""),
@@ -37,7 +41,7 @@ STORAGES = {
         },
     },
     "staticfiles": {
-        "BACKEND": "storages.backends.s3.S3Storage",
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "access_key": os.getenv("S3_ACCESS_KEY", ""),
             "secret_key": os.getenv("S3_SECRET_ACCESS_KEY", ""),
