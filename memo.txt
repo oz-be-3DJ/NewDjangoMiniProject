@@ -1,3 +1,24 @@
+필독 미니 프로젝트 안내
+https://www.notion.so/1c0caf5650aa811c988dd83de237658c
+
+백엔드 API 가이드
+https://docs.google.com/spreadsheets/d/1qL__Ming4UcAr9EQb5MLC2v21x27RD4-NK3XknnVmuI/edit?gid=0#gid=0
+
+[1단계] 깃리파짓토리 생성, 장고 프로젝트 생성, PostgresDB연결
+https://www.notion.so/1-1c2caf5650aa808eb4f5c87fe12964e7
+[2단계] ERD 설계와 Model 생성
+https://www.notion.so/2-1c2caf5650aa8066a17acaf8d4d70b20
+[3단계] 유저 플로우 차트 설계 및 유저 API 구현
+https://www.notion.so/3-1c2caf5650aa808fba55d686a2c9e5aa
+[4단계] 계좌, 거래 API 구현
+https://www.notion.so/4-1c2caf5650aa80cbbb82c2b4b73132c6
+[5단계] 분석(Analysis) API 구현
+https://www.notion.so/5-1c2caf5650aa809ba62ce9488ca62df1
+[6단계] Django Signal을 이용한 알림 구현
+https://www.notion.so/6-1c2caf5650aa80f3b565e5a4f6882876
+[7단계] AWS Cloud Service 를 이용해서 배포
+https://www.notion.so/7-1c2caf5650aa806ba040f5af5cf08ce4
+
 poetry init
 
 라이브러리 제거
@@ -96,6 +117,73 @@ INSERT INTO bank_code (code, name) VALUES
 ('001', '한국은행'),
 ('002', '산업은행'),
 ...
+
+깃 플로우
+https://legend-palm-1f1.notion.site/Git-Flow-14acaf5650aa800387a7c43e334cc72e
+https://legend-palm-1f1.notion.site/Git-Flow-14acaf5650aa80f2a4a9efa455e54f9b
+
+맥에서 홈브루로 깃 플로우 설치
+brew install git-flow-avh
+
+깃 플로우 초기화
+git flow init
+
+Branch name for production releases?
+→ 기본값은 master 이지만 main 으로 하는것 추천
+
+Branch name for "next release" development?
+→ develop (기본값)
+
+나머지 엔터
+
+
+# Feature 브랜치
+
+생성: 새로운 기능을 개발할 때 사용
+git flow feature start <기능이름>
+
+완료: 기능 개발을 마치고 develop 브랜치로 병합
+git flow feature finish <기능이름>
+
+# Release 브랜치
+
+생성: 배포 준비를 할 때 사용
+git flow release start <버전번호>
+
+완료: 릴리즈 완료 후 master와 develop에 병합
+git flow release finish <버전번호>
+
+# Hotfix 브랜치
+
+생성: 긴급한 버그 수정이 필요할 때 사용
+git flow hotfix start <버그이름>
+
+완료: 수정 완료 후 master와 develop에 병합
+git flow hotfix finish <버그이름>
+
+
+## . Git Flow 전체 흐름
+
+1. 팀 리더가 new project 생성하고 초기 세팅을 진행
+2. 팀 리더가 github repository에 올리기
+3. 나머지 팀원들은 repository에 올라 온 project를 클론받아 로컬에 가져옴
+4. 전 팀원 `git flow init` (초기화) 해줌
+    - 초기화 시 `Branch name for production releases?`질문에
+    → 기본 값은 `master` 이지만 `main` 으로 설정하시는 것을 추천..
+5. 모든 팀원 로컬 환경에서 `git branch` 명령어로 존재하는 브랜치를 확인해보면 처음에는 `main` 브랜치 뿐만 있었지만 초기화 이후  `develop` 브랜치가 로컬에 생겨있음을 확인가능.
+6. 각자 맡은 기능 개발을 위해 `git flow feature start 기능이름` 명령어로 feature 브랜치를 생성
+→ `git branch` 명령어로 확인해보면 `feature/기능이름` 브랜치가 생성되어있음.
+7. 생성된 feature 브랜치에서 기능 개발 작업합니다.
+8. 작업 완료 후 feature 브랜치를 원격 저장소에 push 해서 PR 올립니다.
+9. PR 타이틀, 설명 등 작성 후 리뷰어 팀원들 등록합니다.
+10. PR 승인 되면 Squash and Merge 버튼을 통해 압축 된 하나의 커밋으로 develop에 머지합니다.
+11. 그리고 로컬 환경에서 `develop` 브랜치로 checkout 하고, 기능 개발시에 사용했던 기존의  feature 브랜치는 삭제해줍니다.
+12. 개발된 기능이 업데이트 된 원격 저장소의 `develop` 브랜치를 `pull` 합니다.
+    - `git pull origin develop` 명령어 사용하기
+13. (( 7~13번 무한 반복 ))
+14. 각 팀원들이 기능 개발을 모두 완료했다면 배포할 준비를 해야합니다. 팀장이 배포 관련 설정을 모두 완료하고 `develop` 브랜치에 머지합니다.
+15. `main` 브랜치와 `develop` 브랜치를 compare & PR 한 후 `merge` 합니다.
+16. `main` 브랜치를 EC2 에서 클론받아 배포를 진행합니다.
 
 
 .gitignore 시크릿 폴더 업로드 제한
@@ -232,8 +320,23 @@ poetry add -G dev ipython
 poetry.lock 업데이트
 poetry lock
 
+
 개발환경으로 가상환경에 라이브러리 설치
 poetry install --with dev --no-root
+
+로그아웃 구현
+INSTALLED_APPS = [
+    ...
+    'rest_framework_simplejwt.token_blacklist',
+]
+
+# JWT 설정
+SIMPLE_JWT = {
+    "BLACKLIST_AFTER_ROTATION": True,
+    "ROTATE_REFRESH_TOKENS": True,
+}
+
+python manage.py migrate
 
 --------------------
 이메일 보내는 기능 문제
@@ -254,9 +357,12 @@ except Exception as e:
 SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1018)')
 인증서를 찾지 못해서 오류가 났다는 말인데
 
-인증서를 다시 연결해주면 된다.
+파이썬 라이브러리 certifi 설치 후
+인증서를 강제로 인식 가능하게 certifi로 설정하면 어떠한 경우에도 사용가능하다.
+인증서 경로를 인식못하든 인증서가 실제로 존재하지 않든 인식.
+
+터미널에 입력해서 일시적으로 해결하는 방법
 export SSL_CERT_FILE=$(python -m certifi)
-이렇게하면 일시적으로 해당 터미널에서만 해결
 
 해결방법1
 터미널에 영구 적용
@@ -273,7 +379,7 @@ vim .venv/bin/activate
 맨 아랫줄에 추가
 export SSL_CERT_FILE=$(python -m certifi)
 
-해결방법3
+해결방법3 (가장 추천)
 프로젝트가 인증서 경로를 인식할 수 있도록 장고 프로젝트에 설정
 
 certifi라이브러리 없으면 설치 후
@@ -282,5 +388,72 @@ settings.py 최상단에 설정
 
 import os
 import certifi
-
 os.environ['SSL_CERT_FILE'] = certifi.where()
+
+
+-----------
+  배포하기
+-----------
+https://www.notion.so/7-1c2caf5650aa806ba040f5af5cf08ce4
+
+EC2, S3, IAM 생성
+
+.env 작성하기
+# IAM 키 (다운받은 csv 파일에서 확인)
+S3_ACCESS_KEY=생성한 액세스 키
+S3_SECRET_ACCESS_KEY=생성한 비밀 액세스 키
+
+# S3 버킷 설정
+S3_STORAGE_BUCKET_NAME=본인 버킷 이름
+S3_REGION_NAME=ap-northeast-2
+
+django-storages, boto3 설치
+poetry add django-storages boto3
+
+- `django-storages`: static, media 같은 파일을 저장소와 연결해주는 라이브러리
+- `boto3`: AWS 에 python을 이용해서 엑세스할 수 있도록 해주는 라이브러리
+
+# settings.py에 추가
+
+# INSTALLED_APPS에 storages 추가
+INSTALLED_APPS = [
+  	...
+    "storages",
+]
+
+# Static, Media URL 수정
+STATIC_URL = f'https://{os.getenv("S3_STORAGE_BUCKET_NAME", "django-mini-project")}.s3.amazonaws.com/static/'
+MEDIA_URL = f'https://{os.getenv("S3_STORAGE_BUCKET_NAME", "django-mini-project")}.s3.amazonaws.com/media/'
+
+# STORAGES 작성
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "access_key": os.getenv("S3_ACCESS_KEY", ""),
+            "secret_key": os.getenv("S3_SECRET_ACCESS_KEY", ""),
+            "bucket_name": os.getenv("S3_STORAGE_BUCKET_NAME", ""),
+            "region_name": os.getenv("S3_REGION_NAME", ""),
+            "location": "media",
+            "default_acl": "public-read",
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "access_key": os.getenv("S3_ACCESS_KEY", ""),
+            "secret_key": os.getenv("S3_SECRET_ACCESS_KEY", ""),
+            "bucket_name": os.getenv("S3_STORAGE_BUCKET_NAME", ""),
+            "region_name": os.getenv("S3_REGION_NAME", ""),
+            "custom_domain": f'{os.getenv("S3_STORAGE_BUCKET_NAME", "")}.s3.amazonaws.com',
+            "location": "static",
+            "default_acl": "public-read",
+        },
+    },
+}
+
+# S3에 static 파일 업로드
+python manage.py collectstatic
+
+ec2 접속
+ssh -i 키/페어/저장/위치/mp-key.pem ubuntu@EC2_PUBLIC_IP

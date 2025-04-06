@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework_simplejwt',  # poetry add djangorestframework-simplejwt
     'rest_framework_simplejwt.token_blacklist',
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -141,7 +142,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = 'static/'
 
 # Default primary key field type
@@ -211,4 +211,31 @@ SIMPLE_JWT = {
     # It will work instead of the default serializer(TokenObtainPairSerializer).
     "TOKEN_OBTAIN_SERIALIZER": "utils.jwt_serializers.BankTokenObtainPairSerializer",
     # ...
+}
+
+# STORAGES 작성
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "access_key": os.getenv("S3_ACCESS_KEY", ""),
+            "secret_key": os.getenv("S3_SECRET_ACCESS_KEY", ""),
+            "bucket_name": os.getenv("S3_STORAGE_BUCKET_NAME", ""),
+            "region_name": os.getenv("S3_REGION_NAME", ""),
+            "location": "media",
+            "default_acl": "public-read",
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "access_key": os.getenv("S3_ACCESS_KEY", ""),
+            "secret_key": os.getenv("S3_SECRET_ACCESS_KEY", ""),
+            "bucket_name": os.getenv("S3_STORAGE_BUCKET_NAME", ""),
+            "region_name": os.getenv("S3_REGION_NAME", ""),
+            "custom_domain": f'{os.getenv("S3_STORAGE_BUCKET_NAME", "")}.s3.amazonaws.com',
+            "location": "static",
+            "default_acl": "public-read",
+        },
+    },
 }
