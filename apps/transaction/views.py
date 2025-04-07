@@ -1,16 +1,39 @@
 from django.shortcuts import render
 from rest_framework import status
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Account,TransactionHistory
-from .serializers import TransactionHistorySerializer
+from .serializers import TransactionSerializer, TransactionDetailSerializer
 
 
 # Create your views here.
-class CreateTransactionView(APIView):
-    def post(self, request):
+class CreateTransactionView(ListCreateAPIView):
+    # 모든 거래 내역 조회
+    queryset = TransactionHistory.objects.all()
+    # 클래스 지정
+    serializer_class = TransactionSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # query_params으로 필터링 ex) /api/transactions/?transaction_type=입금&min_amount=100
+        transaction_type = self.request.query_params.get('transaction_type') # 입금, 출금
+        min_amount = self.request.query_params.get('min_amount') # 최소 금액
+        max_amount = self.request.query_params.get('max_amount') # 최대 금액
+
+        if transaction_type:
+            queryset = queryset.filter(transaction_type=transaction_type) # 입금, 출금
+        if min_amount:
+            queryset = queryset.filter(transaction_amount__gte=min_amount) # gte -> >=
+        if max_amount:
+            queryset = queryset.filter(transaction_amount__lte=max_amount) # lte -> <=
+
+        return queryset
+
+    def post(self, request, *args, **kwargs):
         # Serializer를 사용해 요청 데이터 검증
-        serializer = TransactionHistorySerializer(data=request.data)
+        serializer = TransactionSerializer(data=request.data)
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -46,5 +69,11 @@ class CreateTransactionView(APIView):
         account.balance = balance_after
         account.save()
 
-        response_serializer = TransactionHistorySerializer(transaction)
+        response_serializer = TransactionSerializer(transaction)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+
+# RetrieveUpdateDestroyAPIView로 PUT, PATCH, DELETE 요청을 처리
+class TransactionDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = TransactionHistory.objects.all()
+    serializer_class = TransactionDetailSerializer
