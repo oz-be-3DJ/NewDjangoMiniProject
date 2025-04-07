@@ -3,7 +3,7 @@ from rest_framework import serializers
 from apps.transaction.models import TransactionHistory
 
 
-class TransactionHistorySerializer(serializers.ModelSerializer):
+class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TransactionHistory
         fields = "__all__"
@@ -23,3 +23,8 @@ class TransactionHistorySerializer(serializers.ModelSerializer):
         if value not in ['현금', '카드', '계좌이체', '자동이체']:
             raise serializers.ValidationError("유효하지 않은 결제 방식입니다. '현금', '카드', '계좌이체', '자동이체'만 가능합니다.")
         return value
+
+class TransactionDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TransactionHistory
+        fields = "__all__"
