@@ -553,3 +553,4 @@ docker stop <컨테이너ID 또는 이름>
 
 rds db에 접속
 psql -h <엔드포인트> -U <DB_USER> -d <DB_NAME> -p <PORT>
+
