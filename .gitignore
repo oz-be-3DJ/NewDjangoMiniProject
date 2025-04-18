@@ -133,6 +133,7 @@ celerybeat.pid
 
 # Environments
 .env
+app/.env
 .venv
 env/
 venv/
@@ -301,4 +302,6 @@ pyrightconfig.json
 .vscode/
 
 # 시크릿 폴더 설정
+app/.config_secret/
 .config_secret/
+secret.json

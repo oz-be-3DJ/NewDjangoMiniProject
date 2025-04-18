@@ -20,19 +20,20 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+print(BASE_DIR)
 
-with open(BASE_DIR / '.config_secret' / 'secret.json') as f:
-    config_secret_str = f.read()
-
-SECRET = json.loads(config_secret_str)  # json 형태를 딕셔너리 형태로 바꿈
+# with open(BASE_DIR.parent / '.config_secret' / 'secret.json') as f:
+#     config_secret_str = f.read()
+#
+# SECRET = json.loads(config_secret_str)  # json 형태를 딕셔너리 형태로 바꿈
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-9u=$gmlz$b8h2^d9%3x871ti9pcile_q19lif*#yw(q@#=nb!8'
-SECRET_KEY = SECRET['DJANGO_SECRET_KEY']
+SECRET_KEY = 'django-insecure-9u=$gmlz$b8h2^d9%3x871ti9pcile_q19lif*#yw(q@#=nb!8'
+# SECRET_KEY = SECRET['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -51,10 +52,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # own
-    'app.transaction',
-    'app.account',  # Account 앱 등록
-    'app.user',
-    'app.bankcode',
+    'transaction',
+    'account',  # Account 앱 등록
+    'user',
+    'bankcode',
 
     # 3rd party
     'rest_framework', #
@@ -167,12 +168,12 @@ REST_FRAMEWORK = {
 
 # # Email
 # # from django.core.mail.backends.smtp import EmailBackend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.naver.com' # 네이버 환결설정에서 볼 수 있음.
-EMAIL_USE_TLS = True  # 보안연결
-EMAIL_PORT = 587  # 네이버 메일 환경설정에서 확인 가능
-EMAIL_HOST_USER = SECRET["email"]["user"]
-EMAIL_HOST_PASSWORD =  SECRET["email"]["password"]
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.naver.com' # 네이버 환결설정에서 볼 수 있음.
+# EMAIL_USE_TLS = True  # 보안연결
+# EMAIL_PORT = 587  # 네이버 메일 환경설정에서 확인 가능
+# EMAIL_HOST_USER = SECRET["email"]["user"]
+# EMAIL_HOST_PASSWORD =  SECRET["email"]["password"]
 
 # .config_secret 폴더 만들고
 # 폴더에 secret.json 만들고

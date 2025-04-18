@@ -1,7 +1,7 @@
 from .base import *
 
 from dotenv import load_dotenv
-load_dotenv(BASE_DIR / '.env')  # .env 파일 로드
+load_dotenv(BASE_DIR.parent / '.env')  # .env 파일 로드
 # print("S3_REGION_NAME:", os.getenv("S3_REGION_NAME"))
 
 # DEBUG = True
@@ -27,6 +27,8 @@ DATABASES = {
 # Static, Media URL 수정
 STATIC_URL = f'https://{os.getenv("S3_STORAGE_BUCKET_NAME", "django-mini-project")}.s3.amazonaws.com/static/'
 MEDIA_URL = f'https://{os.getenv("S3_STORAGE_BUCKET_NAME", "django-mini-project")}.s3.amazonaws.com/media/'
+print(STATIC_URL)
+
 
 # STORAGES 작성
 STORAGES = {
@@ -55,3 +57,11 @@ STORAGES = {
     },
 }
 
+# # Email
+# # from django.core.mail.backends.smtp import EmailBackend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.naver.com' # 네이버 환결설정에서 볼 수 있음.
+EMAIL_USE_TLS = True  # 보안연결
+EMAIL_PORT = 587  # 네이버 메일 환경설정에서 확인 가능
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD =  os.getenv("EMAIL_HOST_PASSWORD", "")

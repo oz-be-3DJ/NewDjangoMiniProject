@@ -1,7 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
-from app.utils.models import TimestampModel
+from utils.models import TimestampModel
 
 
 # 사용자 지정 메니져
